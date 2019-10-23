@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>test</title>
+	</head>
+
+	<body>
+		用户名：<input type="text" id="name"><br>
+		密码：<input type="password" id="pwd"><br>
+		<button id="login" onclick="login();">登&nbsp;录</button>
+	</body>
+<script src="js/jquery.min.js" type="text/javascript" charset='utf-8'></script>
+<script>
+	$(function(){
+		$("#name").focus();
+		document.onkeydown = function (event) {
+ 	        var e = event || window.event;
+ 	        if (e && e.keyCode == 13) {
+ 	        	login();
+ 	        }
+ 	    };
+	})
+	
+	function login(){
+		var name = $("#name").val();
+		var pwd = $("#pwd").val();
+		
+		if(name == "" || name == undefined || name == null || name.indexOf(" ") >= 0) {
+			alert("登录错误")
+			$("#name").focus();
+			return false;
+		}
+		
+		if(pwd == "" || pwd == undefined || pwd == null || pwd.indexOf(" ") >= 0) {
+			alert("登录错误")
+			$("#pwd").focus();
+			return false;
+		}
+		
+		$.ajax({
+			type:"post",
+			url:"/spring-boot/api/authuser",
+			data:encodeURIComponent(JSON.stringify({name:name,pwd:pwd})),
+			ContentType:"application/json;charset=utf-8",
+			success:function(msg){
+				if(msg.code == 0) {
+					alert("登录错误");
+				} else {
+					window.parent.location.href = "index.html?_="+Math.random();
+				}
+			}
+		});
+	}
+</script>
+</html>

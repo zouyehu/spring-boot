@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>test</title>
+	</head>
+	<body>
+		<input type="file" id="files" multiple></br>
+		<input type="button" value="提交" id="submit">
+		<input type="text" name="down" id="down"/>
+		<button id="download">获取</button>
+	</body>
+	<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		$(function(){
+			$("#down").focus();
+			$("#submit").off("click").on("click",function(){
+				var files = $("#files").prop("files");
+				if(files.length <= 0) {
+					alert("请选择文件");
+					return false;
+				}
+				var data = new FormData();
+				$.each(files,function(i,item){
+					data.append("file"+i,files[i]);
+				});
+				$.ajax({
+					type:"post",
+					url:"/failindex/api/files",
+					async:false,
+					cache:false,
+					data:data,
+					dataType:"json",
+					contentType:false,
+					processData:false,
+					success:function(msg){
+						if(msg.code == 99) {
+							window.parent.location.href = "login.html?_="+Math.random();
+						} else {
+							alert("上传成功")
+						}
+					}
+				});
+			});
+			
+			$("#download").off("click").on("click",function(){
+				var val = $("#down").val();
+				if(val == "" || val == undefined || val == null || val.indexOf(" ") >= 0) {
+					alert("请输入要下载的文件名")
+					$("#down").focus();
+					return false;
+				}
+				
+				window.parent.location.href = "/spring-boot/api/download?name="+encodeURIComponent(JSON.stringify({"name":val}));
+			});
+		})
+	</script>
+</html>
